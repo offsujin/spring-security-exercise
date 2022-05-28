@@ -2,7 +2,6 @@ package com.inflearn.securityex1.controller;
 
 import com.inflearn.securityex1.model.User;
 import com.inflearn.securityex1.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -56,6 +55,7 @@ public class IndexController {
         // BCryptPasswordEncoder를 이용하여 비밀번호 암호화하기
         String rawPassword = user.getPassword();
         String encPassword = bCryptPasswordEncoder.encode(rawPassword);
+        user.setPassword(encPassword);
 
         userRepository.save(user); // 비밀번호를 암호화하지 않으면 security로 로그인 할 수 없다.
         return "redirect:/loginForm";

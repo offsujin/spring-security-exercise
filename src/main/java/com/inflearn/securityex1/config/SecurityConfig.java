@@ -22,14 +22,22 @@ public class SecurityConfig {
         http.csrf().disable();
         http.authorizeRequests()
                 // user, manager, admin 일 때에는 access 거른다.
-                .antMatchers("/user/**").authenticated()
+                .antMatchers("/user/**").authenticated() // 인증만 되면 들어갈 수 있는 주소
                 .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
+
                 // 위의 세 경우에 모두 로그인 페이지로 자동 이동하도록 한다.
                 .and()
                 .formLogin()
-                .loginPage("/loginForm");
+                .loginPage("/loginForm")
+
+                // '/login' 주소가 호출되면 security가 낚아채서 대신 로그인을 해준다.
+                .loginProcessingUrl("/login")
+
+                // '/loginForm'으로 들어와서 로그인 성공하면 '/'로 보내주고
+                // 다른 url로 들어오면 로그인 성공시 그쪽으로 보내준다.
+                .defaultSuccessUrl("/");
         return http.build();
     }
 
