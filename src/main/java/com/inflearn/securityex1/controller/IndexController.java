@@ -3,6 +3,9 @@ package com.inflearn.securityex1.controller;
 import com.inflearn.securityex1.model.User;
 import com.inflearn.securityex1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,6 +62,18 @@ public class IndexController {
 
         userRepository.save(user); // 비밀번호를 암호화하지 않으면 security로 로그인 할 수 없다.
         return "redirect:/loginForm";
+    }
+
+    @Secured("ROLE_ADMIN") // 해당 권한만 접근 가능! 특정 메소드에 권한 하나만 걸고 싶을 때
+    @GetMapping("/info")
+    public @ResponseBody String info() {
+        return "개인정보";
+    }
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')") // 두가지 이상 권한 접근 가능! => 메소드 실행 전에 검증
+    @GetMapping("/data")
+    public @ResponseBody String data() {
+        return "데이터 정보";
     }
 
 }
